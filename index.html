@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Student Grade Predictor</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f2f2f2;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+    }
+    form {
+      max-width: 500px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px #ccc;
+    }
+    label {
+      display: block;
+      margin: 15px 0 5px;
+    }
+    input, select, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+    }
+    #result {
+      margin-top: 20px;
+      text-align: center;
+      font-size: 20px;
+      color: green;
+    }
+  </style>
+</head>
+<body>
+  <h1>🎓 Student Grade Predictor</h1>
+  <form id="predict-form">
+    <label>Grade in Period 1 (G1):</label>
+    <input type="number" name="G1" required />
+
+    <label>Grade in Period 2 (G2):</label>
+    <input type="number" name="G2" required />
+
+    <label>Study Time (1-4):</label>
+    <input type="number" name="studytime" required />
+
+    <label>Past Failures (0-4):</label>
+    <input type="number" name="failures" required />
+
+    <label>Absences:</label>
+    <input type="number" name="absences" required />
+
+    <label>Sex (M/F):</label>
+    <input type="text" name="sex" required />
+
+    <label>Internet at Home (yes/no):</label>
+    <input type="text" name="internet" required />
+
+    <label>Wants Higher Education (yes/no):</label>
+    <input type="text" name="higher" required />
+
+    <label>Father's Education (0-4):</label>
+    <input type="number" name="Fedu" required />
+
+    <label>Mother's Education (0-4):</label>
+    <input type="number" name="Medu" required />
+
+    <button type="submit">Predict Grade</button>
+    <div id="result"></div>
+  </form>
+
+  <script>
+    const form = document.getElementById('predict-form');
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData(form);
+      const jsonData = {};
+      formData.forEach((value, key) => jsonData[key] = value);
+
+      const res = await fetch('/predict', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(jsonData)
+      });
+
+      const result = await res.json();
+      const resultDiv = document.getElementById('result');
+
+      if (result.predicted_grade !== undefined) {
+        resultDiv.textContent = "🎯 Predicted Final Grade (G3): " + result.predicted_grade;
+      } else {
+        resultDiv.textContent = "❌ Error: " + result.error;
+      }
+    });
+  </script>
+</body>
+</html>
